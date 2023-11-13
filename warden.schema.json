@@ -1,0 +1,511 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Red-DiscordBot Defender Warden",
+  "description": "Typing support for Red-DiscordBot's Defender Warden",
+  "type": "object",
+  "properties": {
+    "rank": {
+      "description": "The highest rank that this rule will target.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "name": {
+      "description": "The name of the rule.",
+      "type": "string"
+    },
+    "event": {
+      "description": "The event that this rule will target.",
+      "type": "array",
+      "items": {
+        "enum": [
+          "on-message",
+          "on-message-edit",
+          "on-message-delete",
+          "on-user-join",
+          "on-user-leave",
+          "on-role-add",
+          "on-role-remove",
+          "on-reaction-add",
+          "on-reaction-remove",
+          "on-emergency",
+          "manual",
+          "perodic"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "priority": {
+      "description": "The priority of the rule.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "if": {
+      "description": "The conditions that must be met for the rule to trigger.",
+      "type": "array",
+      "minimum": 1,
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/if-arguments"
+          }
+        ]
+      }
+    },
+    "do": {
+      "description": "The actions that will be performed when the rule triggers.",
+      "type": "array",
+      "minimum": 1,
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/do-arguments"
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "if-arguments": {
+      "type": "object",
+      "properties": {
+        "message-matches-any": {
+          "description": "Is true if any of the patterns that you list are found in the message's content. This kind of searching might be inconvenient in certain use cases: if you prefer to look for whole words instead see the condition message-contains-word\nAccepts: A list of patterns. Patterns can make use of wildcards such as * and ?\nContext: message",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "message-matches-regex": {
+          "description": "Is true if the message's content matches the regex pattern.\nAccepts: A regex pattern as string\nContext: message",
+          "type": "string"
+        },
+        "message-has-attachment": {
+          "description": "Is true if the message has an attachment.\nContext: message",
+          "type": "boolean"
+        },
+        "message-contains-word": {
+          "description": "Is true if any of the words you list are found in the message. It does what it is most commonly know \"whole word search\". Patterns are supported\nAccepts: A list of words. Patterns can make use of wildcards such as * and ?\nContext: message",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "message-contains-url": {
+          "description": "Is true if the message contains a clickable URL.\nAccepts: A bool (true of false)\nContext: message",
+          "type": "boolean"
+        },
+        "message-contains-invite": {
+          "description": "Is true if the message contains a discord invite.\nAccepts: A bool (true or false)\nContext: message",
+          "type": "boolean"
+        },
+        "message-contains-media": {
+          "description": "Is true if the message contains any media link (picture or video).\nAccepts: A bool (true or false)\nContext: message",
+          "type": "boolean"
+        },
+        "message-contains-more-than-mentions": {
+          "description": "Will check if the message contains more than X user mentions.\nAccepts: A number representing the number of mentions\nContext: message",
+          "type": "integer"
+        },
+        "message-contains-more-than-unique-mentions": {
+          "description": "Will check if the message contains more than X unique user mentions. As opposed to the non-unique variant the mentioned users are being counted, not just the mentions themselves.\nAccepts: A number representing the number of unique mentions\nContext: message",
+          "type": "integer"
+        },
+        "message-contains-more-than-role-pings": {
+          "description": "Will check if the message contains more than X unique role mentions. Only mentions that result in a ping will be counted.\nAccepts: A number representing the number of role mentions\nContext: message",
+          "type": "integer"
+        },
+        "message-contains-more-than-emojis": {
+          "description": "Will check if the message contains more than X emojis.\nImportant: emojis with modifiers, such as a thumbs up emoji with custom skin color, will be considered 2 separate emojis.\nAccepts: A number representing the number of emojis.\nContext: message",
+          "type": "integer"
+        },
+        "message-contains-more-than-characters": {
+          "description": "Will check if the message contains more than X characters. Emojis and custom emojis will be considered a single character. Mentions, both users and channels, are counted too.\nAccepts: A number representing the number of characters.\nContext: message",
+          "type": "integer"
+        },
+        "user-id-matches-any": {
+          "description": "Is true if the user's ID matches any of the IDs you list.\nAccepts: A list of user IDs\nContext: user",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "username-matches-any": {
+          "description": "Is true if the user's name matches any of the patterns you list. Patterns can make use of wildcards such as * and ?\nAccepts: A list of patterns\nContext: user",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "username-matches-regex": {
+          "description": "Is true if the user's name matches the regex pattern.\nAccepts: A regex pattern as string\nContext: user",
+          "type": "string"
+        },
+        "nickname-matches-any": {
+          "description": "Is true if the user's nickname matches any of the patterns you list. Patterns can make use of wildcards such as * and ?\nAccepts: A list of patterns\nContext: user",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nickname-matches-regex": {
+          "description": "Is true if the user's nickname matches the regex pattern.\nAccepts: A regex pattern as string\nContext: user",
+          "type": "string"
+        },
+        "user-activity-matches-any": {
+          "description": "Is true if any of the patterns that you list are found in any of the user's activities.\nAccepts: A list of patterns\nContext: user",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user-activity-matches-regex": {
+          "description": "Is true if and of the user's activity matches the regex pattern.\nAccepts: A regex pattern as string\nContext: user",
+          "type": "string"
+        },
+        "user-status-matches-any": {
+          "description": "Is true if any of the statuses that you list are the user's current status\nAccepts: A list of statuses. Can be online, idle, dnd or offline\nContext: user",
+          "type": "array",
+          "items": {
+            "enum": ["online", "idle", "dnd", "offline"]
+          }
+        },
+        "user-created-less-than": {
+          "description": "Is true if the user's account has been created less than ago.\nAccepts: A timedelta, or a number, representing the amount of hours to be checked\nContext: user",
+          "type": ["string", "integer"]
+        },
+        "user-joined-less-than": {
+          "description": "Is true if the user has joined the server less than ago.\nAccepts: A timedelta, or a number, representing the amount of hours to be checked\nContext: user",
+          "type": ["string", "integer"]
+        },
+        "user-has-default-avatar": {
+          "description": "Is true if the user has the default avatar.\nAccepts: A bool (true or false)\nContext: user",
+          "type": "boolean"
+        },
+        "user-has-less-than-send-messages": {
+          "description": "Will check if the user has sent less than X messages in the server.\nImportant: Defender, by default, counts how many messages a user sends in a server. This does not check the real total number of messages a user has sent in a server since its creation.\nAccepts: A number representing the number of messages\nContext: user",
+          "type": "integer"
+        },
+        "user-is-rank": {
+          "description": "Will check if the user is the specified rank. This condition allows for rank-specific Warden rules and grants more granular control compared to the standard rank parameter, which merely indicates the maximum rank a rule will have effect on.\nAccepts: A number representing the rank the user must belong to\nContext: user",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "channel-matches-any": {
+          "description": "Will check if the message was send in any of the specified channels\nAccepts: A list of channel names or IDs\nContext: message",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "category-matches-any": {
+          "description": "Will check if the message was send in any of the specified categories\nAccepts: A list of category names or IDs\nContext: message",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "channel-is-public": {
+          "description": "Will check if the message was send in a public viewable channel.\nAccepts: A bool (true or false)\nContext: message",
+          "type": "boolean"
+        },
+        "in-emergency-mode": {
+          "description": "Will check if a server is in emergency mode.\nAccepts: A bool (true or false)\nContext: server\nContext: Any",
+          "type": "boolean"
+        },
+        "user-has-any-roles-in": {
+          "description": "Is true if the user belongs to any of the roles in the list\nAccepts: A list of role names or IDs\nContext: user",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "is-staff": {
+          "description": "Will check if the user is a staff member.\nAccepts: A bool (true or false)\nContext: user",
+          "type": "boolean"
+        },
+        "is-helper": {
+          "description": "Will check if the user is a Defender helper.\nAccepts: A bool (true or false)\nContext: user",
+          "type": "boolean"
+        },
+        "user-heat-is": {
+          "description": "Is true if the user has the specified heat value\nAccepts: A number between 0 and 100\nContext: user",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "user-heat-more-than": {
+          "description": "Is true if the user has more than the specified heat value\nAccepts: A number between 0 and 100\nContext: user",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "channel-heat-is": {
+          "description": "Is true if the channel has the specified heat value\nAccepts: A number between 0 and 100\nContext: message",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "channel-heat-more-than": {
+          "description": "Is true if the channel has more than the specified heat value\nAccepts: A number between 0 and 100\nContext: message",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "custom-heat-is": {
+          "description": "Is true if the custom heat has the specified heat value\nAccepts: A number between 0 and 100\nContext: Any",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "custom-heat-more-than": {
+          "description": "Is true if the custom heat has more than the specified heat value\nAccepts: A number between 0 and 100\nContext: Any",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "compare": {
+          "description": "Compares two values. Supports a variety of operators, textual and numeric. The comparison is case sensitive. This is most useful when used in conjunction with context variables. Using numeric operators with non-numeric values will raise an error.\nSupported operators: ==, !=, contains, contains-pattern, >=, <=, <, >\ncontains-pattern supports a pattern, just like the condition message-matches-any and it's case insensitive.Context: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "number"]
+          }
+        }
+      }
+    },
+    "do-arguments": {
+      "type": "object",
+      "properties": {
+        "set-user-nickname": {
+          "description": "Will set the user's nickname\nAccepts: A string representing the nickname\nContext: user",
+          "type": "string"
+        },
+        "delete-user-message": {
+          "description": "Will delete the user's message\nAccepts: Nothing\nContext: message"
+        },
+        "add-roles-to-user": {
+          "description": "Will add the specified roles to the user\nAccepts: A list of role names or IDs\nContext: user",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "remove-roles-from-user": {
+          "description": "Will remove the specified roles from the user\nAccepts: A list of role names or IDs\nContext: user",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "ban-user-and-delete": {
+          "description": "Will ban the user and delete X days worth of messages\nAccepts: A number representing the days worth of messages to delete\nContext: user",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7
+        },
+        "kick-user": {
+          "description": "Will kick the user\nAccepts: Nothing\nContext: user"
+        },
+        "softban-user": {
+          "description": "Will softban the user and delete 1 days worth of messages\nAccepts: Nothing\nContext: user"
+        },
+        "punish-user": {
+          "description": "Will assing to the user the \"punish role\" that has been set in defender.\nAccepts: Nothing\nContext: user"
+        },
+        "punish-user-with-message": {
+          "description": "Will assign to the user the \"punish role\" and deliver the \"punish message\" that have been set in defender.\nAccepts: Nothing\nContext: user"
+        },
+        "get-user-info": {
+          "description": "Get an attribute from an arbitrary user and assigns it to a variable. Many of the standard discord.py member attributes are supported.\nAdditionally, the following attributes are supported\n\"is_staff\" & \"is_helper\" return true or false\n\"rank\" returns the rank number\n\"message_count\" returns the number of messages recorded\n\nIf the user cannot be found an error will be raised\nAccepts: The ID of the user, and a map with the attribute to fetch\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object"]
+          }
+        },
+        "notify-staff": {
+          "description": "Will send a message to staff's notification channel. This message may include an embed. Refer to the documentation for more info.\nAccepts: A string representing the message to send, Or a map that describes the embed\nContext: Any",
+          "type": ["string", "object"]
+        },
+        "send-mod-log": {
+          "description": "Will create a new mod log case of the last expel action issued by the rule.\nAccepts: A string representing the reason of the expel action, supports context variables\nContext: Any",
+          "type": "string"
+        },
+        "send-to-monitor": {
+          "description": "Will send a message to Defender's monitor\nAccepts: A string representing the message to send, supports context variables\nContext: Any",
+          "type": "string"
+        },
+        "warnsystem-warn": {
+          "description": "Will warn one or more users using the Warnsystem Cog\nAccepts: Just... Read the docs on this one, it's a bit complicated\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "integer", "object"]
+          }
+        },
+        "set-channel-slowmode": {
+          "description": "Will set (or deactivate) slowmode of the channel in the message from context\nAccepts: A string representing the slowmode delayin a timedelta, or \"0 seconds\" to deactivate\nContext: message",
+          "type": "string"
+        },
+        "enable-emergency-mode": {
+          "description": "Will toggle the emergency mode of the server\nAccepts: A bool (true or false)\nContext: server",
+          "type": "boolean"
+        },
+        "no-op": {
+          "description": "Does nothing\nAccepts: Nothing\nContext: Any"
+        },
+        "exit": {
+          "description": "Interrupts the rule execution\nAccepts: Nothing\nContext: Any"
+        },
+        "issue-command": {
+          "description": "Will issue a bot command as if it was issued by the specified user. The specified user must be the rule's author. If no destination is specified issuing a command in a message context will make it issue in the same channel as the message's; in any other case the command will be issued in Defender's notification channel.\nAccepts: A list with two elements: a number representing the ID of the rule's author and a string representing the command to issue. The command must not contain the prefix. Context variables are supported. The long form of this action also supports a destination.\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "integer", "object"]
+          }
+        },
+        "delete-last-message-send-after": {
+          "description": "Will delete the last message sent after the specified timedelta\nAccepts: A timedelta between 1 seccond and 15 minutes\nContext: Any",
+          "type": "string"
+        },
+        "var-assign": {
+          "description": "Assign a value to a variable\nRead the docs on these\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object", "integer"]
+          }
+        },
+        "var-assign-random": {
+          "description": "Assign a random value to a variable, picking one from a list of choices. Supports weighted choices\nRead the docs on these\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object", "integer"]
+          }
+        },
+        "var-assign-heat": {
+          "description": "Assigns a heat level to a variable, supports all kinds of heat levels\nRead the docs on these\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object", "integer"]
+          }
+        },
+        "var-math": {
+          "description": "Perform mathematical operations on variables with up to two operands. Supports context variables.\nRead the docs on these\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object", "integer"]
+          }
+        },
+        "var-split": {
+          "description": "Splits a variable into parts, using separator as the delimiter, and assigns the parts to different variables. If there are more parts than provided variables, the remaining parts will be discarded. If there are fewer parts than provided variables, an empty string will be assigned to the remaining variables. Maximum splits can be specified, by default there is no limit.\nRead the docs on these\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object", "integer"]
+          }
+        },
+        "var-slice": {
+          "description": "Slices a variable according to the indices (the position of the characters) that are being passed. If a variable name is passed with slice_into the original variable will be left untouched. The optional parameter step, found in Python's string slicing, can also be passed. Remember than indices start from 0, not 1.\nRead the docs on these\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object", "integer"]
+          }
+        },
+        "var-replace": {
+          "description": "Modifies a variable with all occurences of strings replaced by substring. Strings can be a single value or a list of values.\nRead the docs on these\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object", "integer"]
+          }
+        },
+        "var-transform": {
+          "description": "Modifies a variable depending on the \"operation\" that it's being requested. Supported operations are capitalize, lowercase, reverse, uppercase, title.\nRead the docs on these\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "object", "integer"]
+          }
+        },
+        "add-user-heatpoint": {
+          "description": "Adds a single heat point with the specified lifetime to a user's heat level.\nAccepts: A string representing the heat point's lifetime in a timedelta\nContext: user",
+          "type": "string"
+        },
+        "add-user-headpoints": {
+          "description": "Adds multiple heat points with the specified lifetime to the user's heat level\nAccepts: A list containing two elements: the amount of heatpoints to assign (1-100) and a string representing the heat points' lifetime. Some examples: '5 seconds', '2 minutes', '4 hours'\nContext: user",
+          "type": "array",
+          "items": {
+            "type": ["string", "integer"]
+          }
+        },
+        "add-channel-heatpoint": {
+          "description": "Adds a single heat point with the specified lifetime to a channel's heat level.\nAccepts: A string representing the heat point's lifetime in a timedelta\nContext: message",
+          "type": "string"
+        },
+        "add-channel-heatpoints": {
+          "description": "Adds multiple heat points with the specified lifetime to the channel's heat level\nAccepts: A list containing two elements: the amount of heatpoints to assign (1-100) and a string representing the heat points' lifetime. Some examples: '5 seconds', '2 minutes', '4 hours'\nContext: message",
+          "type": "array",
+          "items": {
+            "type": ["string", "integer"]
+          }
+        },
+        "add-custom-heatpoint": {
+          "description": "Adds a single heat point with the specified lifetime to a custom heat level.\nAccepts: A list containing two elements: A string representing the custom heat level name, and a string representing the heat point's lifetime in a timedelta\nRule name and IDs context variables are available for the name\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "integer"]
+          }
+        },
+        "add-custom-headpoints": {
+          "description": "Adds multiple heat points with the specified lifetime to a custom heat level.\nAccepts: A list containing three elements: A string representing the custom heat level name, the number of heatpoints, and a string representing the heat point's lifetime in a timedelta\nRule name and IDs context variables are available for the name\nContext: Any",
+          "type": "array",
+          "items": {
+            "type": ["string", "integer"]
+          }
+        },
+        "empty-user-heat": {
+          "description": "Sets the user's heat level to 0\nAccepts: Nothing\nContext: user"
+        },
+        "empty-channel-heat": {
+          "description": "Sets the channel's heat level to 0\nAccepts: Nothing\nContext: message"
+        },
+        "empty-custom-heat": {
+          "description": "Sets the custom heat level to 0\nAccepts: A string representing the custom heat level name\nRule name and IDs context variables are available for the name\nContext: Any",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
