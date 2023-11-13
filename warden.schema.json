@@ -36,6 +36,10 @@
       "uniqueItems": true,
       "minItems": 1
     },
+    "run-every": {
+      "description": "A timedelta that runs the rule every X timedelta. This is only used when the event is perodic.",
+      "type": "string"
+    },
     "priority": {
       "description": "The priority of the rule.",
       "type": "integer",
@@ -61,6 +65,9 @@
         "anyOf": [
           {
             "$ref": "#/$defs/do-arguments"
+          },
+          {
+            "$ref": "#/$defs/if-arguments"
           }
         ]
       }
@@ -490,6 +497,34 @@
           "type": "array",
           "items": {
             "type": ["string", "object", "integer"]
+          }
+        },
+        "if-true": {
+          "description": "Checks if the last condition is true, and if it is, executes the specified actions.\nAccepts: A list of actions\nContext: Any",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/do-arguments"
+              },
+              {
+                "$ref": "#/$defs/if-arguments"
+              }
+            ]
+          }
+        },
+        "if-false": {
+          "description": "Checks if the last condition is false, and if it is, executes the specified actions.\nAccepts: A list of actions\nContext: Any",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/do-arguments"
+              },
+              {
+                "$ref": "#/$defs/if-arguments"
+              }
+            ]
           }
         },
         "add-user-heatpoint": {
