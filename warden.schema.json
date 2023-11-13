@@ -70,6 +70,39 @@
     "if-arguments": {
       "type": "object",
       "properties": {
+        "if-any": {
+          "description": "A contional if block, if any condition are true, returns true\nAccepts: A list of conditions\nContext: Any",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/if-arguments"
+              }
+            ]
+          }
+        },
+        "if-not": {
+          "description": "A conditional if block, if every condition is false, returns true\nAccepts: A list of conditions\nContext: Any",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/if-arguments"
+              }
+            ]
+          }
+        },
+        "if-all": {
+          "description": "A conditional if block, if every condition is true, returns true\nAccepts: A list of conditions\nContext: Any",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/if-arguments"
+              }
+            ]
+          }
+        },
         "message-matches-any": {
           "description": "Is true if any of the patterns that you list are found in the message's content. This kind of searching might be inconvenient in certain use cases: if you prefer to look for whole words instead see the condition message-contains-word\nAccepts: A list of patterns. Patterns can make use of wildcards such as * and ?\nContext: message",
           "type": "array",
